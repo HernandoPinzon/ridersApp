@@ -33,7 +33,7 @@ public class DialogLogs extends javax.swing.JDialog {
         super(parent, modal);
         this.conexion = conexion;
         this.user_id=user_id;
-        
+        setLocation(parent.getX(), parent.getY());
         initComponents();
         showRutesLogs();
     }
@@ -50,6 +50,7 @@ public class DialogLogs extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         lb_messaje = new javax.swing.JLabel();
+        btn_cancel = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_rutes = new javax.swing.JTable();
@@ -66,21 +67,33 @@ public class DialogLogs extends javax.swing.JDialog {
         lb_messaje.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
         lb_messaje.setText("Registro de rutas");
 
+        btn_cancel.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        btn_cancel.setText("Cerrar");
+        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cancelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(131, 131, 131)
+                .addContainerGap()
                 .addComponent(lb_messaje)
-                .addContainerGap(143, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 148, Short.MAX_VALUE)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lb_messaje)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btn_cancel)
+                    .addComponent(lb_messaje))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         tbl_rutes.setModel(new javax.swing.table.DefaultTableModel(
@@ -133,7 +146,7 @@ public class DialogLogs extends javax.swing.JDialog {
         ));
         jScrollPane2.setViewportView(tbl_events);
 
-        jLabel2.setText("Novedades");
+        jLabel2.setText("Novedades en ruta seleccionada");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -153,7 +166,7 @@ public class DialogLogs extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -215,6 +228,10 @@ public class DialogLogs extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_tbl_rutesMouseClicked
 
+    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btn_cancelActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -227,6 +244,7 @@ public class DialogLogs extends javax.swing.JDialog {
             resultSet = st.executeQuery(query);
             Object[]event = new Object[3];
             DefaultTableModel model = (DefaultTableModel)tbl_events.getModel();
+            model.setRowCount(0);
             while(resultSet.next()){
                 System.out.println("entre");
                 event[0]=resultSet.getInt("event_id");
@@ -280,6 +298,7 @@ public class DialogLogs extends javax.swing.JDialog {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_cancel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

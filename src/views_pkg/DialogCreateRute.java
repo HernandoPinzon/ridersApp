@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import model_pkg.Conexion;
@@ -33,6 +34,7 @@ public class DialogCreateRute extends javax.swing.JDialog {
     String end_date;
     java.awt.Frame parent;
     DialogCreateEvent createEventDialog;
+    ArrayList<Object[]> events;
     
     /**
      * Creates new form DialogRuteLog
@@ -58,6 +60,7 @@ public class DialogCreateRute extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         lb_messaje = new javax.swing.JLabel();
+        btn_cancel = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         tf_start_name = new javax.swing.JTextField();
         tf_end_name = new javax.swing.JTextField();
@@ -73,20 +76,32 @@ public class DialogCreateRute extends javax.swing.JDialog {
         lb_messaje.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
         lb_messaje.setText("Registro de ruta");
 
+        btn_cancel.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        btn_cancel.setText("Cancelar");
+        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cancelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(78, 78, 78)
+                .addContainerGap()
                 .addComponent(lb_messaje)
+                .addGap(84, 84, 84)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_messaje)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lb_messaje)
+                    .addComponent(btn_cancel))
                 .addContainerGap())
         );
 
@@ -180,7 +195,7 @@ public class DialogCreateRute extends javax.swing.JDialog {
                     .addComponent(btn_end_rute))
                 .addGap(18, 18, 18)
                 .addComponent(btn_create_event, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23))
+                .addGap(59, 59, 59))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -215,6 +230,18 @@ public class DialogCreateRute extends javax.swing.JDialog {
                 System.out.println(formatter.format(date));
                 end_date = formatter.format(date);
                 createRute();
+                //encontrr idruta
+                int id_rute = getID();
+                
+                //agregar eventos
+                if (events!=null) {
+                    for (int i = 0; i < events.size(); i++) {
+                        Object[]event = events.get(i);
+                        System.out.println("se agrego evento "+event[0].toString());
+                        createEvent(event[0].toString(), event[1].toString(), id_rute);
+                    }
+                }
+                
             } catch (NumberFormatException e) {
                 System.out.println(e);
             }
@@ -246,10 +273,24 @@ public class DialogCreateRute extends javax.swing.JDialog {
         createEventDialog= new DialogCreateEvent(this.parent, true);
         this.setVisible(false);
         createEventDialog.setVisible(true);
+        Object[]event = createEventDialog.event;
         
+        if (event!=null) {
+            if (events==null) {
+                events = new ArrayList<>();
+            }
+            System.out.println(event[0]+": "+event[1]+"");
+            events.add(event);
+            
+        }
         this.setVisible(true);
         
+        
     }//GEN-LAST:event_btn_create_eventActionPerformed
+
+    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btn_cancelActionPerformed
 
     private void cleanTfs(){
         tf_distance.setText("");
@@ -259,6 +300,25 @@ public class DialogCreateRute extends javax.swing.JDialog {
         tf_distance.setEditable(false);
         btn_create_event.setEnabled(false);
         btn_end_rute.setEnabled(false);
+    }
+    
+    private int getID(){
+        String query = "SELECT `rute_id` FROM `rutas` WHERE start_time='"+start_date+"' AND user_id="+user_id;
+        try{
+            cn = conexion.getConection();
+            st = cn.createStatement();
+            resultSet = st.executeQuery(query);
+            int ruta_id=-1;
+            while(resultSet.next()){
+                ruta_id=resultSet.getInt("rute_id");
+            }
+            return ruta_id;
+            //System.out.println("user_id="+user_id+" y username="+username);
+            
+        }catch(SQLException e){
+            System.out.println(e);
+        }
+        return -1;
     }
     
     private boolean createRute(){
@@ -277,12 +337,28 @@ public class DialogCreateRute extends javax.swing.JDialog {
         }
     }
     
+    private boolean createEvent(String event_type, String description, int rute_id){
+        String query = "INSERT INTO `eventos`(`rute_id`, `event_type`, `description`) "
+                + "VALUES ("+rute_id+",'"+event_type+"','"+description+"')";
+        try{
+            System.out.println(query);
+            cn = conexion.getConection();
+            st = cn.createStatement();
+            st.executeUpdate(query);
+            return true;
+        }catch(SQLException e){
+            System.out.println(e);
+            return false;
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_cancel;
     private javax.swing.JButton btn_create_event;
     private javax.swing.JButton btn_end_rute;
     private javax.swing.JButton btn_start_rute;
