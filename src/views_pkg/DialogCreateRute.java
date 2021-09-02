@@ -218,8 +218,8 @@ public class DialogCreateRute extends javax.swing.JDialog {
             } catch (NumberFormatException e) {
                 System.out.println(e);
             }
-                
-        }
+            System.out.println("cambio");
+        } 
     }//GEN-LAST:event_btn_end_ruteActionPerformed
 
     private void btn_start_ruteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_start_ruteActionPerformed
